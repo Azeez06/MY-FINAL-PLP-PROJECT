@@ -1,6 +1,7 @@
 // src/pages/Dashboard.jsx
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import Footer from "../components/Footer";
 
 // Icons
 import { Briefcase, Sparkles, Newspaper } from "lucide-react";
@@ -211,6 +212,7 @@ export default function Dashboard() {
         </div>
 
       </div>
+       <Footer />
     </div>
   );
 }

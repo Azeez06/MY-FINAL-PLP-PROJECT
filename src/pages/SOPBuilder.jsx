@@ -1,4 +1,7 @@
 import { useState } from "react";
+import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
+import Footer from "../components/Footer";
 
 export default function SOPBuilder() {
   const [step, setStep] = useState(1);
@@ -23,6 +26,8 @@ export default function SOPBuilder() {
 ${fullName}
 ${email}
 ${institution ? `${institution} – ${program}` : ""}
+
+
 
 ---
 
@@ -65,6 +70,26 @@ ${fullName}
   </div>
 );
 
+const downloadSOP = () => {
+  const doc = new jsPDF({
+    unit: "pt",
+    format: "a4"
+  });
+
+  const leftMargin = 40;
+  const topMargin = 50;
+  const maxWidth = 520;
+
+  doc.setFont("Times", "Normal");
+  doc.setFontSize(12);
+
+  doc.text(generatedSOP, leftMargin, topMargin, {
+    maxWidth,
+    lineHeightFactor: 1.5
+  });
+
+  doc.save(`${formData.name || "My"}_SOP.pdf`);
+};
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col items-center py-14 px-6">
@@ -266,19 +291,30 @@ ${fullName}
       </QuestionBox>
     )}
 
-    {/* Step 9 */}
-    {step === 9 && generatedSOP && (
-      <div className="mt-16 bg-white p-10 rounded-2xl shadow-xl border border-gray-200">
-        <h2 className="text-3xl font-bold text-blue-700 mb-6 text-center">
-          Your Generated SOP
-        </h2>
-        <pre className="whitespace-pre-wrap text-gray-800 text-lg leading-relaxed">
-          {generatedSOP}
-        </pre>
-      </div>
-    )}
+ {/* Step 9 */}
+{step === 9 && generatedSOP && (
+  <div className="mt-16 bg-white p-10 rounded-2xl shadow-xl border border-gray-200">
+    <h2 className="text-3xl font-bold text-blue-700 mb-6 text-center">
+      Your Generated SOP
+    </h2>
+
+    <pre className="whitespace-pre-wrap text-gray-800 text-lg leading-relaxed mb-6">
+      {generatedSOP}
+    </pre>
+
+    {/* PDF BUTTON */}
+    <button
+      onClick={downloadSOP}
+      className="bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold shadow hover:bg-blue-700 transition"
+    >
+      Download as PDF
+    </button>
+  </div>
+)}
+
 
   </div>
+   <Footer />
 </div>
 
   );

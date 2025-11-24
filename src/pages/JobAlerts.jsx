@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { Briefcase, Box, Bookmark } from "lucide-react"; // optional icons, lucide-react already in your deps
-
+import Footer from "../components/Footer";
 export default function JobSearch() {
   const [mode, setMode] = useState("job"); // 'job' or 'intern'
   const [keyword, setKeyword] = useState("");
@@ -369,6 +369,7 @@ export default function JobSearch() {
         </div>
 
       </div>
+       <Footer />
     </div>
   );
 }

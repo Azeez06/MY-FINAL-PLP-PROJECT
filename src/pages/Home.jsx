@@ -1,4 +1,5 @@
 import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 import {
   CheckCircle,
   FileText,
@@ -158,7 +159,9 @@ export default function Home() {
               Showcase your skills, experience, and achievements beautifully — all in one professional portfolio.
             </p>
           </div>
+          
         </div>
+         <Footer />
       </section>
     </>
   );

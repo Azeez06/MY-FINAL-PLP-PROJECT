@@ -1,4 +1,5 @@
 import { useState } from "react";
+import Footer from "../components/Footer";
 
 export default function Settings() {
   const [darkMode, setDarkMode] = useState(true);
@@ -179,6 +180,7 @@ export default function Settings() {
           </button>
         </div>
       </div>
+       <Footer />
     </div>
   );
 }

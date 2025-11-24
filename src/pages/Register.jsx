@@ -1,6 +1,7 @@
 // src/pages/Register.jsx
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import Footer from "../components/Footer";
 
 export default function Register() {
   const [isLogin, setIsLogin] = useState(false);
@@ -122,6 +123,7 @@ export default function Register() {
           </Link>
         </div>
       </div>
+       <Footer />
     </div>
   );
 }

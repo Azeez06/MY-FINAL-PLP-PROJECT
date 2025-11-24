@@ -1,31 +1,27 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Home from "./pages/Home";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
-import Dashboard from "./pages/Dashboard";
-import ResumeBuilder from "./pages/ResumeBuilder";
-import CoverLetterBuilder from "./pages/CoverLetterBuilder";
-import SOPBuilder from "./pages/SOPBuilder";
-import JobAlerts from "./pages/JobAlerts";
-import PortfolioBuilder from "./pages/PortfolioBuilder";
-import Settings from "./pages/Settings";
+export default function Footer() {
+  return (
+    <footer className="bg-gray-900 text-gray-300 py-6 mt-20">
+      <div className="max-w-6xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center">
 
+        {/* Left Section */}
+        <p className="text-sm">
+          © {new Date().getFullYear()} Career Builder. All rights reserved.
+        </p>
 
-const AppRouter = () => (
-  <Router>
-    <Routes>
-      <Route path="/" element={<Home />} />
-      <Route path="/login" element={<Login />} />
-      <Route path="/register" element={<Register />} />
-      <Route path="/dashboard" element={<Dashboard />} />
-      <Route path="/resume" element={<ResumeBuilder />} />
-      <Route path="/cover-letter" element={<CoverLetterBuilder />} />
-      <Route path="/sop" element={<SOPBuilder />} />
-      <Route path="/job-alerts" element={<JobAlerts />} />
-      <Route path="/portfolio" element={<PortfolioBuilder />} />
-      <Route path="/settings" element={<Settings />} />
-    </Routes>
-  </Router>
-);
+        {/* Center Links */}
+        <div className="flex gap-6 text-sm mt-3 md:mt-0">
+          <a href="/resume" className="hover:text-white">Resume Builder</a>
+          <a href="/cover-letter" className="hover:text-white">Cover Letter</a>
+          <a href="/sop" className="hover:text-white">SOP Builder</a>
+          <a href="/portfolio" className="hover:text-white">Portfolio</a>
+        </div>
 
-export default AppRouter;
+        {/* Right Section */}
+        <p className="text-sm">
+          Built with STEM for Nigerians
+        </p>
+
+      </div>
+    </footer>
+  );
+}

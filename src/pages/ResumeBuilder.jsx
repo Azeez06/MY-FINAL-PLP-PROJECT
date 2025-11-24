@@ -1,6 +1,7 @@
 import { useState, useRef } from "react";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
+import Footer from "../components/Footer";  
 
 export default function ResumeBuilder() {
   const [step, setStep] = useState(1);
@@ -587,6 +588,7 @@ const LightSectionTitle = ({ children }) => (
   })()}
 </div>
       </div>
+       <Footer />
     </div>
   );
 }

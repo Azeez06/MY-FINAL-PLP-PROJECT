@@ -1,4 +1,5 @@
 import { useState } from "react";
+import Footer from "../components/Footer";
 import {
   Code2,
   PenTool,
@@ -414,6 +415,7 @@ export default function PortfolioBuilder() {
               Preview Portfolio
             </button>
           </div>
+           <Footer />
         </div>
       )}
     </div>

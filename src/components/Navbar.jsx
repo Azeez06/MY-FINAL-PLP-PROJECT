@@ -12,7 +12,7 @@ const Navbar = () => {
 
         {/* CENTER NAV LINKS */}
         <div className="hidden md:flex items-center space-x-6 font-medium text-gray-600">
-          <Link to="/register" className="hover:text-blue-600 transition">Resumes</Link>
+          <Link to="/ResumeBuilder" className="hover:text-blue-600 transition">Resumes</Link>
           <Link to="/register" className="hover:text-blue-600 transition">CV</Link>
           <Link to="/register" className="hover:text-blue-600 transition">Cover Letters</Link>
           <Link to="/register" className="hover:text-blue-600 transition">Jobs</Link>
