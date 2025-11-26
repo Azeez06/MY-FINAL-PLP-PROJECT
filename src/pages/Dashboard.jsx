@@ -1,7 +1,9 @@
 // src/pages/Dashboard.jsx
 import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import Footer from "../components/Footer";
+import { apiClient, authHeaders } from "../utils/api";
 
 // Icons
 import { Briefcase, Sparkles, Newspaper } from "lucide-react";
@@ -16,24 +18,25 @@ const tiles = [
   { title: "CV Analyzer", desc: "Get AI feedback", route: "/cv-analyzer" },
   { title: "Settings", desc: "Manage account", route: "/Settings" },
 ];
-
 export default function Dashboard() {
   const navigate = useNavigate();
 
   const [jobs, setJobs] = useState([]);
   const [loadingJobs, setLoadingJobs] = useState(true);
 
+  // REMOVE THIS (you asked for that)
+  // const resumes = JSON.parse(localStorage.getItem("cb_resumes")) || [];
+
+  // Keep this — used for recommended jobs
   const user = JSON.parse(localStorage.getItem("cb_user")) || {};
-  const resumes = JSON.parse(localStorage.getItem("cb_resumes")) || [];
 
   const skillOrTitle =
     user?.profession ||
     user?.skills ||
     "Mass Communication"; // fallback keyword
 
-
   // ======================================================
-  // 🔥 1. FETCH JOBS FROM JSEARCH API (RECOMMENDED JOBS)
+  // 🔥 1. FETCH JOBS (ALREADY WORKING)
   // ======================================================
   useEffect(() => {
     const fetchJobs = async () => {
@@ -45,7 +48,8 @@ export default function Dashboard() {
           {
             method: "GET",
             headers: {
-              "x-rapidapi-key": "0b5b496647mshd574be77fbbe992p162869jsne3d2c2a4cdd0", // 🔥 paste your key here
+              "x-rapidapi-key":
+                "0b5b496647mshd574be77fbbe992p162869jsne3d2c2a4cdd0",
               "x-rapidapi-host": "jsearch.p.rapidapi.com",
             },
           }
@@ -53,7 +57,6 @@ export default function Dashboard() {
 
         const data = await res.json();
         setJobs(data?.data?.slice(0, 3) || []);
-
       } catch (err) {
         console.error("Job API error:", err);
       } finally {
@@ -64,13 +67,39 @@ export default function Dashboard() {
     fetchJobs();
   }, []);
 
+  // ======================================================
+  // 🔥 2. FETCH USER'S SAVED RESUMES FROM BACKEND
+  // ======================================================
+  const [savedResumes, setSavedResumes] = useState([]);
 
-  // Logout
+  useEffect(() => {
+    const loadResumes = async () => {
+      try {
+        const res = await apiClient.get("/resume/my", {
+          headers: authHeaders(),
+        });
+
+        console.log("Fetched resumes:", res.data);
+        setSavedResumes(res.data.resumes || []);
+      } catch (err) {
+        console.error("Error fetching resumes:", err);
+      }
+    };
+
+    loadResumes();
+  }, []);
+
+  // ======================================================
+  // LOGOUT
+  // ======================================================
   const handleLogout = () => {
     localStorage.removeItem("cb_auth");
     localStorage.removeItem("cb_user");
     navigate("/");
   };
+
+  
+  
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
@@ -119,41 +148,41 @@ export default function Dashboard() {
           </div>
         )}
 
+<div className="mt-8">
+  <h2 className="text-xl font-bold mb-3">Your Saved Resumes</h2>
 
-        {/* ============================================================
-               2️⃣ RECENT RESUMES
-        ============================================================ */}
-        <h2 className="text-xl font-semibold mb-3">My Recent Resumes</h2>
+  {savedResumes.length === 0 ? (
+    <p className="text-gray-500">You haven't saved any resumes yet.</p>
+  ) : (
+    <ul className="space-y-2">
+      {savedResumes.map((resume) => (
+        <li
+          key={resume._id}
+          className="p-4 bg-white shadow rounded-lg border flex justify-between items-start"
+        >
+          <div>
+            <h3 className="font-semibold">{resume.title}</h3>
+            <p className="text-sm text-gray-600">
+              {resume.summary?.slice(0, 80)}...
+            </p>
+            <p className="text-xs text-gray-400">
+              Created: {new Date(resume.createdAt).toLocaleString()}
+            </p>
+          </div>
 
-        <div className="bg-white p-5 rounded-xl border shadow-sm mb-10">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="text-gray-500 border-b">
-                <th className="py-2 text-left">Name</th>
-                <th className="py-2">Modified</th>
-                <th className="py-2">Strength</th>
-              </tr>
-            </thead>
+          {/* EDIT BUTTON */}
+          <button
+            onClick={() => navigate(`/ResumeBuilder?edit=${resume._id}`)}
+            className="px-3 py-1 bg-blue-600 text-white rounded-md hover:bg-blue-700 ml-4"
+          >
+            Edit
+          </button>
+        </li>
+      ))}
+    </ul>
+  )}
+</div>
 
-            <tbody>
-              {resumes.length === 0 ? (
-                <tr>
-                  <td colSpan="3" className="text-gray-500 py-3 text-center">
-                    No resumes yet.
-                  </td>
-                </tr>
-              ) : (
-                resumes.map((r, i) => (
-                  <tr key={i} className="border-b">
-                    <td className="py-2">{r.name}</td>
-                    <td className="py-2 text-center">{r.modified}</td>
-                    <td className="py-2 text-center">{r.score}</td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
 
 
         {/* ============================================================

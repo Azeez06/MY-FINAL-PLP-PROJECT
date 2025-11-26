@@ -1,7 +1,12 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 import Footer from "../components/Footer";  
+import { apiClient, authHeaders } from "../utils/api";
+import { useSearchParams } from "react-router-dom";
+
+
+
 
 export default function ResumeBuilder() {
   const [step, setStep] = useState(1);
@@ -124,6 +129,82 @@ const addEducation = () => {
   pdf.save(`${formData.name || "My"}_Professional_CV.pdf`);
 };
 
+const saveResumeToServer = async () => {
+  try {
+    // Build payload from formData (example fits your state shape)
+    const payload = {
+      title: `${formData.name} ${formData.surname} CV`,
+      personal: {
+        fullName: `${formData.name} ${formData.surname}`,
+        email: formData.email,
+        phone: formData.phone,
+        city: formData.city,
+        country: formData.country,
+        linkedin: formData.linkedin,
+      },
+      summary: formData.summary,
+      experiences: formData.experiences,
+      education: formData.education,
+      skills: (formData.skills || "")
+        .split(",")
+        .map((s) => s.trim())
+        .filter(Boolean),
+      certifications: formData.certifications,
+      technicalSkills: formData.technicalSkills,
+    };
+
+    const token = localStorage.getItem("token");
+
+    const res = await apiClient.post("/resume/create", payload, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (res.data && res.data.resume) {
+      alert("Saved resume to server!");
+    }
+  } catch (err) {
+    console.error(
+      "saveResumeToServer error:",
+      err.response ? err.response : err
+    );
+
+    alert(err.response?.data?.message || "Save failed");
+  }
+};
+
+const [searchParams] = useSearchParams();
+const editId = searchParams.get("edit");
+
+const [loadingEdit, setLoadingEdit] = useState(false);
+// ======================================================
+// 🚀 EDIT MODE — Load existing resume
+// ======================================================
+useEffect(() => {
+  const loadResumeForEdit = async () => {
+    if (!editId) return; // not editing
+
+    setLoadingEdit(true);
+    try {
+      const res = await apiClient.get(`/resume/${editId}`, {
+        headers: authHeaders(),
+      });
+
+      console.log("Loaded resume for editing:", res.data);
+
+      // Fill form with the saved resume
+      setFormData(res.data.resume);
+
+    } catch (err) {
+      console.error("Failed to load resume for edit:", err);
+    } finally {
+      setLoadingEdit(false);
+    }
+  };
+
+  loadResumeForEdit();
+}, [editId]);
 
   return (
     <div className="min-h-screen flex flex-col md:flex-row bg-gray-50">
@@ -380,6 +461,9 @@ const addEducation = () => {
               >
                 Download Professional PDF
               </button>
+              <button onClick={saveResumeToServer} className="ml-3 bg-green-600 text-white px-4 py-2 rounded-md">
+  Save to Account
+</button>
             </div>
           )}
 
@@ -588,7 +672,6 @@ const LightSectionTitle = ({ children }) => (
   })()}
 </div>
       </div>
-       <Footer />
     </div>
   );
 }
